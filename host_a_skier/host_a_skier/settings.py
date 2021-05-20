@@ -33,7 +33,7 @@ data = yaml.load(fh, Loader=yaml.FullLoader)['data']
 fh.close()
 
 
-SECRET_KEY = data['secrete_key']
+SECRET_KEY = data['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
