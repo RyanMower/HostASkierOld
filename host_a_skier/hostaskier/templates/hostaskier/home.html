@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1> Host a skier home page. </h1>
+    {% for host in hosts %}
+      <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            <a class="mr-2" href="#">{{ host.name }}</a>
+            <small class="text-muted">{{ host.price }}</small>
+          </div>
+          <h2><a class="article-title" href="#">{{ host.avalibility }}</a></h2>
+          <p class="article-content">{{ host.location }}</p>
+        </div>
+      </article>
+    {% endfor %}
+{% endblock content %}

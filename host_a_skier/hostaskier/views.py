@@ -1,9 +1,27 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+
+hostinfo = [
+    {
+        'name': 'Bob Trueman',
+        'price': "20 a set", 
+        'location': "Vail, CO", 
+        'avalibility': "anytime"
+    },
+        {
+        'name': 'Pete Davidson',
+        'price': "40 a set", 
+        'location': "Squa Valley, CA", 
+        'avalibility': "Mondays and Fridays"
+    }
+]
+
 
 # Create your views here.
 def home_view(request):
-    return HttpResponse('<h1> Host a Skier Home! </h1>')
+    context = {
+        'hosts': hostinfo
+    }
+    return render(request, 'hostaskier/home.html', context)
 
 def about_view(request):
-    return HttpResponse('<h1> Host a Skier About Page! </h1>')
+    return render(request, 'hostaskier/about.html')
