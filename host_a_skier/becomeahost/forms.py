@@ -16,6 +16,12 @@ class HostForm(forms.ModelForm):
             'phone_number',
             'boat_type',
             'events_can_pull',
-            'availability'
-            #'extra_info'
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+            'extra_info'
         ]
