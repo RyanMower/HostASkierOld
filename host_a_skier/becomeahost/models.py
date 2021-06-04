@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from users.models import Profile
 from multiselectfield import MultiSelectField
+from django.utils.translation import ugettext as _
 
 TIMES =      ((0,    '12:00 AM'),
               (0.25, '12:15 AM'),
@@ -99,29 +100,46 @@ TIMES =      ((0,    '12:00 AM'),
               (23.25, '11:15 PM'),
               (23.5, '11:30 PM'),
               (23.75, '11:45 PM'))
+              
+BOAT_TYPES = ((1, 'Malibu'),
+              (2, 'ATX'),
+              (3, 'Centurion'),
+              (4, 'Nautique'),
+              (5, 'MasterCraft'),
+              (6, 'Moomba'),
+              (7, 'Tige'),
+              (8, 'Supra'),
+              (9, 'Axis'),
+              (10, 'Other'))
+
+WATERSKI_EVENTS =   ((1, 'Slalom'),
+                    (2, 'Jump'),
+                    (3, 'Trick'),
+                    (3, 'Wake Surfing'),
+                    (3, 'Wake Boarding'),
+                    (4, 'Other'))
 
 
 # Create your models here.
 class Host(models.Model):
-    address_1 = models.CharField(max_length=100)
-    address_2 = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    #zip_code = models.IntegerField(blank=True, null=True)
-    zip_code = models.IntegerField()
-    state = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
+    address_1 = models.CharField(_("Address 1"), max_length=100, default="123 Street Road")
+    address_2 = models.CharField(_("Address 2"), max_length=100, blank=True)
+    city = models.CharField(_("City"), max_length=100, default="Zanesville")
+    zip_code = models.CharField(_("Zip Code"), max_length=5, default="43701")
+    state = models.CharField(_("State"), max_length=100, default="Minnesota")
+    country = models.CharField(_("Country"), max_length=100, default="USA")
 
-    #latitude = models.DecimalField(
-    #   max_digits=9, decimal_places=6, blank=True, default='0')
-    #longitude = models.DecimalField(
-    #    max_digits=9, decimal_places=6, blank=True, default='0')
+    latitude = models.DecimalField(
+      max_digits=9, decimal_places=6, blank=True, default='0')
+    longitude = models.DecimalField(
+       max_digits=9, decimal_places=6, blank=True, default='0')
 
     price = models.CharField(max_length=100)
     email = models.CharField(max_length=100) #opt
     phone_number = models.CharField(max_length=100) #opt
 
-    boat_type = models.CharField(max_length=100) # MAKE THIS A CHOICES DROP DOWN
-    events_can_pull = models.CharField(max_length=100) # Make this a multiple choices drop down!
+    boat_type = MultiSelectField(choices=BOAT_TYPES) 
+    events_can_pull = MultiSelectField(choices=WATERSKI_EVENTS)
 
     monday    = MultiSelectField(blank=True, choices=TIMES)
     tuesday   = MultiSelectField(blank=True, choices=TIMES)
@@ -130,6 +148,7 @@ class Host(models.Model):
     friday    = MultiSelectField(blank=True, choices=TIMES)
     saturday  = MultiSelectField(blank=True, choices=TIMES)
     sunday    = MultiSelectField(blank=True, choices=TIMES)
+
     
     
     extra_info = models.TextField(blank=True)
