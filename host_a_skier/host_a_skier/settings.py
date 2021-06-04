@@ -47,6 +47,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'hostaskier.apps.HostaskierConfig',
     'users.apps.UsersConfig',
+    'becomeahost.apps.BecomeahostConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
