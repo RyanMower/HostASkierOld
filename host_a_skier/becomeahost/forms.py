@@ -15,6 +15,7 @@ class HostForm(forms.ModelForm):
             'email',
             'phone_number',
             'boat_type',
-            'events_can_pull'
+            'events_can_pull',
+            'availability'
             #'extra_info'
         ]

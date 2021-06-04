@@ -8,7 +8,7 @@ class Host(models.Model):
     address_2 = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     #zip_code = models.IntegerField(blank=True, null=True)
-    zip_code = models.CharField(max_length=100)
+    zip_code = models.IntegerField()
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
 
@@ -24,6 +24,7 @@ class Host(models.Model):
     boat_type = models.CharField(max_length=100) # MAKE THIS A CHOICES DROP DOWN
     events_can_pull = models.CharField(max_length=100) # Make this a multiple choices drop down!
 
+    availability = models.TextField()
     
     hostest = models.ForeignKey(User, on_delete=models.CASCADE)
 
