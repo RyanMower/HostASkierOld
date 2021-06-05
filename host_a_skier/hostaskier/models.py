@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from account.models import Account
 
 class Post(models.Model):
     # max_length determines character length of title
@@ -13,7 +13,7 @@ class Post(models.Model):
 
     # using Django User model as datatype
     # on_delete meaning that if a user is deleted their posts are deleted
-    auther = models.ForeignKey(User, on_delete=models.CASCADE)
+    auther = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

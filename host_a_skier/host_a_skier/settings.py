@@ -46,6 +46,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'hostaskier.apps.HostaskierConfig',
+    'account',
     'users.apps.UsersConfig',
     'becomeahost.apps.BecomeahostConfig',
     'crispy_forms',
@@ -86,6 +87,8 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTH_USER_MODEL = 'account.Account'
 
 WSGI_APPLICATION = 'host_a_skier.wsgi.application'
 

@@ -98,7 +98,7 @@ TIMES =      ((0,    '12:00 AM'),
               (23.75, '11:45 PM'))
 
 class HostForm(forms.ModelForm):
-    monday = forms.MultipleChoiceField(choices=TIMES, widget=forms.CheckboxSelectMultiple)
+    
     class Meta:
         model = Host
         fields = [

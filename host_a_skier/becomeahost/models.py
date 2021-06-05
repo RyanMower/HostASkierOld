@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from account.models import Account
 from users.models import Profile
 from multiselectfield import MultiSelectField
 from django.utils.translation import ugettext as _
@@ -153,7 +153,7 @@ class Host(models.Model):
     
     extra_info = models.TextField(blank=True)
 
-    hostest = models.ForeignKey(User, on_delete=models.CASCADE)
+    hostest = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     
 
