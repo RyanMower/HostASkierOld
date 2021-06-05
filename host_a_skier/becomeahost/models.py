@@ -119,15 +119,41 @@ WATERSKI_EVENTS =   ((1, 'Slalom'),
                     (3, 'Wake Boarding'),
                     (4, 'Other'))
 
+def update_optional_user_fields(self):
+    if self.address_1 == '':
+        self.address_1 = self.hostest.address_1
+
+    if self.address_2 == '':
+        self.address_2 = self.hostest.address_2
+
+    if self.city == '':
+        self.city = self.hostest.city
+
+    if self.zip_code == '':
+        self.zip_code = self.hostest.zip_code
+
+    if self.state == '':
+        self.state = self.hostest.state
+
+    if self.country == '':
+        self.country = self.hostest.country
+
+    if self.email == '':
+        self.email = self.hostest.email
+
+    if self.phone_number == '':
+        self.phone_number = self.hostest.phone_number
+
+
 
 # Create your models here.
 class Host(models.Model):
-    address_1 = models.CharField(_("Address 1"), max_length=100, default="123 Street Road")
+    address_1 = models.CharField(_("Address 1"), max_length=100, default="123 Street Road", blank=True)
     address_2 = models.CharField(_("Address 2"), max_length=100, blank=True)
-    city = models.CharField(_("City"), max_length=100, default="Zanesville")
-    zip_code = models.CharField(_("Zip Code"), max_length=5, default="43701")
-    state = models.CharField(_("State"), max_length=100, default="Minnesota")
-    country = models.CharField(_("Country"), max_length=100, default="USA")
+    city = models.CharField(_("City"), max_length=100, default="Zanesville", blank=True)
+    zip_code = models.CharField(_("Zip Code"), max_length=5, default="43701", blank=True)
+    state = models.CharField(_("State"), max_length=100, default="Minnesota", blank=True)
+    country = models.CharField(_("Country"), max_length=100, default="USA", blank=True)
 
     latitude = models.DecimalField(
       max_digits=9, decimal_places=6, blank=True, default='0')
@@ -135,8 +161,8 @@ class Host(models.Model):
        max_digits=9, decimal_places=6, blank=True, default='0')
 
     price = models.CharField(max_length=100)
-    email = models.CharField(max_length=100) #opt
-    phone_number = models.CharField(max_length=100) #opt
+    email = models.CharField(max_length=100, blank=True) #opt
+    phone_number = models.CharField(max_length=100, blank=True) #opt
 
     boat_type = MultiSelectField(choices=BOAT_TYPES) 
     events_can_pull = MultiSelectField(choices=WATERSKI_EVENTS)
@@ -154,10 +180,10 @@ class Host(models.Model):
     extra_info = models.TextField(blank=True)
 
     hostest = models.ForeignKey(Account, on_delete=models.CASCADE)
-
     
 
     def save(self, **kwargs):
+        update_optional_user_fields(self)
         super().save(**kwargs)
 
         # address = " ".join(
