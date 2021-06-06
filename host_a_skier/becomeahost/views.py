@@ -5,6 +5,16 @@ from .forms import HostForm
 from django.contrib import messages
 from account.models import Account
 
+def check_lat_lon(form):
+    print(form.latitude + "-- Lat")
+    print(form.longitude + "-- Lon")
+    if int(form.latitude) == 0:
+        print("Returning False")
+        return False
+    if int(form.longitude) == 0:
+        print("Returning False")
+        return False
+    return True
 
 @login_required
 def become_a_host_view(request):
@@ -13,9 +23,13 @@ def become_a_host_view(request):
     if form.is_valid():
         pre_save = form.save(commit=False)
         pre_save.hostest = request.user
-        pre_save.save()
-        messages.success(request, f'{request.user.username}\'s Ski spot created successfully')
-        return redirect('hostaskier-home')
+        if (check_lat_lon(pre_save)):
+            pre_save.save()
+            messages.success(request, f'{request.user.username}\'s Ski spot created successfully')
+            return redirect('hostaskier-home')
+        else:
+            messages.error(request, f'{request.user.username}\'s Please enter a valid address.')
+        
         
     context = {
         'form': form
