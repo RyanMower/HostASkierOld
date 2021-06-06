@@ -3,6 +3,59 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from django_countries.fields import CountryField
+from urllib.parse import urlencode
+import yaml
+import requests
+
+def get_api_key():
+    fname = "secrets.yaml"
+    try:
+        fh = open(fname, "r")
+    except:
+        print("Could not open file: " + fname)
+        exit(1)
+
+    data = yaml.load(fh, Loader=yaml.FullLoader)
+    fh.close()
+
+    return data['google_geolocation']['api_key']
+
+
+def get_lat_long(address):
+    data_type = 'json'
+    endpoint = f'https://maps.googleapis.com/maps/api/geocode/{data_type}'
+    params = {
+        "address" : address,
+        "key" : get_api_key()
+    }
+    url_params = urlencode(params)
+    url = f'{endpoint}?{url_params}'
+
+    r = requests.get(url)
+
+    if r.status_code not in range(200, 299):
+        return {}
+    
+    latlng = {}
+    try:
+        latlng = r.json()['results'][0]['geometry']['location']
+    except:
+        pass
+    return latlng
+
+def update_lat_long(self):
+    address = f'{self.address_1} {self.city} {self.zip_code} {self.state} {self.country}'
+    lat_long = get_lat_long(address)
+
+    if 'lat' in lat_long:
+        self.latitude = lat_long['lat']
+    else:
+        self.latitude = 0.0
+    
+    if 'lng' in lat_long:
+        self.longitude = lat_long['lng']
+    else:
+        self.longitude = 0.0
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, email, username, address_1, address_2, 
@@ -100,3 +153,7 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, app_laber):
         return True
+
+    def save(self, **kwargs):
+        update_lat_long(self)
+        super().save(**kwargs)

@@ -3,6 +3,9 @@ from account.models import Account
 from users.models import Profile
 from multiselectfield import MultiSelectField
 from django.utils.translation import ugettext as _
+from urllib.parse import urlencode
+import yaml
+import requests
 
 TIMES =      ((0,    '12:00 AM'),
               (0.25, '12:15 AM'),
@@ -145,14 +148,66 @@ def update_optional_user_fields(self):
         self.phone_number = self.hostest.phone_number
 
 
+def get_api_key():
+    fname = "secrets.yaml"
+    try:
+        fh = open(fname, "r")
+    except:
+        print("Could not open file: " + fname)
+        exit(1)
+
+    data = yaml.load(fh, Loader=yaml.FullLoader)
+    fh.close()
+
+    return data['google_geolocation']['api_key']
+
+
+
+
+def get_lat_long(address):
+    data_type = 'json'
+    endpoint = f'https://maps.googleapis.com/maps/api/geocode/{data_type}'
+    params = {
+        "address" : address,
+        "key" : get_api_key()
+    }
+    url_params = urlencode(params)
+    url = f'{endpoint}?{url_params}'
+    print(url)
+
+    r = requests.get(url)
+
+    if r.status_code not in range(200, 299):
+        return {}
+    
+    latlng = {}
+    try:
+        latlng = r.json()['results'][0]['geometry']['location']
+    except:
+        pass
+    return latlng
+
+def update_lat_long(self):
+    address = f'{self.address_1} {self.city} {self.zip_code} {self.state} {self.country}'
+    lat_long = get_lat_long(address)
+
+    if 'lat' in lat_long:
+        self.latitude = lat_long['lat']
+    else:
+        self.latitude = 0.0
+    
+    if 'lng' in lat_long:
+        self.longitude = lat_long['lng']
+    else:
+        self.longitude = 0.0
 
 # Create your models here.
 class Host(models.Model):
     address_1 = models.CharField(_("Address 1"), max_length=100, default="123 Street Road", blank=True)
     address_2 = models.CharField(_("Address 2"), max_length=100, blank=True)
     city = models.CharField(_("City"), max_length=100, default="Zanesville", blank=True)
-    zip_code = models.CharField(_("Zip Code"), max_length=5, default="43701", blank=True)
     state = models.CharField(_("State"), max_length=100, default="Minnesota", blank=True)
+    zip_code = models.CharField(_("Zip Code"), max_length=5, default="43701", blank=True)
     country = models.CharField(_("Country"), max_length=100, default="USA", blank=True)
 
     latitude = models.DecimalField(
@@ -184,6 +239,7 @@ class Host(models.Model):
 
     def save(self, **kwargs):
         update_optional_user_fields(self)
+        update_lat_long(self)
         super().save(**kwargs)
 
         # address = " ".join(
@@ -248,4 +304,3 @@ class Host(models.Model):
 #         #     self.latitude = api_response_dict['results'][0]['geometry']['location']['lat']
 #         #     self.longitude = api_response_dict['results'][0]['geometry']['location']['lng']
 #         #     super().save(**kwargs)
-
