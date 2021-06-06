@@ -6,13 +6,9 @@ from django.contrib import messages
 from account.models import Account
 
 def check_lat_lon(form):
-    print(form.latitude + "-- Lat")
-    print(form.longitude + "-- Lon")
     if int(form.latitude) == 0:
-        print("Returning False")
         return False
     if int(form.longitude) == 0:
-        print("Returning False")
         return False
     return True
 
