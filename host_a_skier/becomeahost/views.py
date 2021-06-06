@@ -4,6 +4,7 @@ from .models import Host
 from .forms import HostForm
 from django.contrib import messages
 from account.models import Account
+import geopy.distance
 
 def check_lat_lon(form):
     if int(form.latitude) == 0:
