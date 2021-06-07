@@ -173,7 +173,7 @@ def get_lat_long(address):
     }
     url_params = urlencode(params)
     url = f'{endpoint}?{url_params}'
-    print(url)
+    print("---->" + url)
 
     r = requests.get(url)
 

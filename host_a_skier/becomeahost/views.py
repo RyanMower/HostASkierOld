@@ -21,6 +21,7 @@ def become_a_host_view(request):
         pre_save = form.save(commit=False)
         pre_save.hostest = request.user
         if (check_lat_lon(pre_save)):
+            print("HERE")
             pre_save.save()
             messages.success(request, f'{request.user.username}\'s Ski spot created successfully')
             return redirect('hostaskier-home')

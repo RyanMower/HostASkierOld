@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django import forms
-from django_countries.fields import CountryField
 from urllib.parse import urlencode
 import yaml
 import requests
@@ -120,7 +119,7 @@ class Account(AbstractBaseUser):
     city = models.CharField(_("City"), max_length=100, default="Zanesville")
     zip_code = models.CharField(_("Zip Code"), max_length=5, default="43701")
     state = models.CharField(_("State"), max_length=100, default="Minnesota")
-    country = models.CharField(_("State"), max_length=100, default="Minnesota")
+    country = models.CharField(_("Country"), max_length=100, default="United States of America")
 
 
     latitude = models.DecimalField(
