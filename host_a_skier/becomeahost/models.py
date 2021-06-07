@@ -3,9 +3,8 @@ from account.models import Account
 from users.models import Profile
 from multiselectfield import MultiSelectField
 from django.utils.translation import ugettext as _
-from urllib.parse import urlencode
-import yaml
-import requests
+
+
 
 TIMES =      ((0,    '12:00 AM'),
               (0.25, '12:15 AM'),
@@ -148,59 +147,6 @@ def update_optional_user_fields(self):
         self.phone_number = self.hostest.phone_number
 
 
-def get_api_key():
-    fname = "secrets.yaml"
-    try:
-        fh = open(fname, "r")
-    except:
-        print("Could not open file: " + fname)
-        exit(1)
-
-    data = yaml.load(fh, Loader=yaml.FullLoader)
-    fh.close()
-
-    return data['google_geolocation']['api_key']
-
-
-
-
-def get_lat_long(address):
-    data_type = 'json'
-    endpoint = f'https://maps.googleapis.com/maps/api/geocode/{data_type}'
-    params = {
-        "address" : address,
-        "key" : get_api_key()
-    }
-    url_params = urlencode(params)
-    url = f'{endpoint}?{url_params}'
-    print("---->" + url)
-
-    r = requests.get(url)
-
-    if r.status_code not in range(200, 299):
-        return {}
-    
-    latlng = {}
-    try:
-        latlng = r.json()['results'][0]['geometry']['location']
-    except:
-        pass
-    return latlng
-
-def update_lat_long(self):
-    address = f'{self.address_1} {self.city} {self.zip_code} {self.state} {self.country}'
-    lat_long = get_lat_long(address)
-
-    if 'lat' in lat_long:
-        self.latitude = lat_long['lat']
-    else:
-        self.latitude = 0.0
-    
-    if 'lng' in lat_long:
-        self.longitude = lat_long['lng']
-    else:
-        self.longitude = 0.0
-
 # Create your models here.
 class Host(models.Model):
     address_1 = models.CharField(_("Address 1"), max_length=100, default="123 Street Road", blank=True)
@@ -239,68 +185,4 @@ class Host(models.Model):
 
     def save(self, **kwargs):
         update_optional_user_fields(self)
-        update_lat_long(self)
         super().save(**kwargs)
-
-        # address = " ".join(
-        #     [self.address_1, self.address_2, str(self.zip_code), self.city])
-        # api_key = "PROJECT_API_KEY"
-        # api_response = requests.get(
-        #     'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
-        # api_response_dict = api_response.json()
-
-        # if api_response_dict['status'] == 'OK':
-        #     self.latitude = api_response_dict['results'][0]['geometry']['location']['lat']
-        #     self.longitude = api_response_dict['results'][0]['geometry']['location']['lng']
-        #     super().save(**kwargs)
-
-
-
-# from django.db import models
-# from django.contrib.auth.models import User
-# from users.models import Profile
-# from django_countries.fields import CountryField
-# import requests
-
-# # Create your models here.
-# class Host(models.Model):
-#     # profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
-
-#     # If blank, use the address of the currently logged in user
-#     address_1 = models.CharField(max_length=100)
-#     address_2 = models.CharField(max_length=100)
-#     city = models.CharField(max_length=100)
-#     zip_code = models.IntegerField(blank=True, null=True)
-#     state = models.CharField(max_length=100)
-#     country = CountryField(blank=True)
-
-#     latitude = models.DecimalField(
-#         max_digits=9, decimal_places=6, blank=True, default='0')
-#     longitude = models.DecimalField(
-#         max_digits=9, decimal_places=6, blank=True, default='0')
-
-#     price = models.CharField(max_length=100)
-#     email = models.CharField(max_length=100) #opt
-#     phone_number = models.CharField(max_length=100) #opt
-
-#     boat_type = models.CharField(max_length=100) # MAKE THIS A CHOICES DROP DOWN
-#     events_can_pull = models.CharField(max_length=100) # Make this a multiple choices drop down!
-
-#     hostest = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     extra_info = content = models.TextField()
-
-#     def save(self, **kwargs):
-#         super().save(**kwargs)
-
-#         # address = " ".join(
-#         #     [self.address_1, self.address_2, str(self.zip_code), self.city])
-#         # api_key = "PROJECT_API_KEY"
-#         # api_response = requests.get(
-#         #     'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
-#         # api_response_dict = api_response.json()
-
-#         # if api_response_dict['status'] == 'OK':
-#         #     self.latitude = api_response_dict['results'][0]['geometry']['location']['lat']
-#         #     self.longitude = api_response_dict['results'][0]['geometry']['location']['lng']
-#         #     super().save(**kwargs)
