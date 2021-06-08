@@ -19,6 +19,7 @@ from django.urls import path, include
 from account import views as account_views
 from users import views as user_views
 from becomeahost import views as becomeahost_views
+from findmyhost import views as findmyhost_views
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -30,7 +31,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('becomeahost/', becomeahost_views.become_a_host_view, name='becomeahost'),
-    path('findmyhost/', becomeahost_views.become_a_host_view, name='findmyhost'), # Change this view once it is created
+    path('findmyhost/', findmyhost_views.findmyhost_view, name='findmyhost'),
     
 ]
 

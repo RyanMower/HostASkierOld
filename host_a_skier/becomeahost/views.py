@@ -5,7 +5,6 @@ from .forms import HostForm
 from django.contrib import messages
 from account.models import Account
 from urllib.parse import urlencode
-import geopy.distance
 import yaml
 import requests 
 

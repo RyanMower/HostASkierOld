@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1> Find Your Host Today! </h1>
+    <form method='POST'> 
+        {% csrf_token %}
+        {{ search_form.as_p }}
+        If an address is not provided, your account address will be used instead.
+        {{ address_form.as_p }}
+        <input type='submit' value='Filter' /> 
+    </form>
+    {% for host in hosts %} 
+        {{ host.email }}
+        {{ host.address_1 }}
+    {% endfor %}
+
+{% endblock content %}
