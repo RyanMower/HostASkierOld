@@ -45,6 +45,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'findmyhost.apps.FindmyhostConfig',
     'hostaskier.apps.HostaskierConfig',
     'account',
     'users.apps.UsersConfig',
