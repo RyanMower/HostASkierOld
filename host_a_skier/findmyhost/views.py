@@ -8,6 +8,7 @@ from  geopy import distance
 import yaml
 import requests 
 from becomeahost.models import Host
+from math import radians, cos, sin, asin, sqrt
 
 
 ## ------------------------------- ##
@@ -74,6 +75,20 @@ def modified_addr(form):
         modified_addr = True
     return modified_addr
 
+# returns true if inside radius, otherwise false
+def is_within_radius(coords_1, coords_2, radius):
+
+    # convert to radians
+    lat_1, lon_1, lat_2, lon_2 = map(radians, [coords_1[0], coords_1[1], coords_2[0], coords_2[1]])
+
+    # haversine
+    dlon = lon_2 - lon_1
+    dlat = lat_2 - lat_1
+    a = sin(dlat/2)**2 + cos(lat_1) * cos(lat_2) * sin(dlon/2)**2
+    c = 2 * sin(sqrt(a))
+    x = c * 3956 # 6371 for kilometers
+    return x <= radius
+
 ## ------------------------------- ##
 ## ------ FILTER FUNCTIONS  ------ ##
 ## ------------------------------- ##
@@ -82,8 +97,10 @@ def get_hosts():
 
 def filter_on_distance(hosts, form, search_form, latlng, request):
     new_hosts = []
-    if search_form.cleaned_data.get("willing_distance") == 'Any':
-        return host
+    print(search_form.cleaned_data.get("willing_distance"))
+    if search_form.cleaned_data.get("willing_distance") == '5':
+        print("in here")
+        return hosts
 
     if not check_lat_lon(latlng):
         latlng['lat'] = request.user.latitude
@@ -96,8 +113,8 @@ def filter_on_distance(hosts, form, search_form, latlng, request):
     for host in hosts:
         coords_2 = (host.latitude, host.longitude)
         #ans = (distance.distance(coords_1, coords_2).miles)
-        ans = distance.great_circle(coords_1, coords_2).miles
-        if ans < distance:
+        #ans = distance.great_circle(coords_1, coords_2).miles
+        if is_within_radius(coords_1, coords_2, distance):
             new_hosts.append(host)
 
     return new_hosts
@@ -109,6 +126,7 @@ def filter_on_email(hosts, form):
             if host.email == form.cleaned_data.get("email"):
                 new_hosts.append(host)
     else:
+        print("in here")
         new_hosts = hosts
     return new_hosts
 
@@ -119,6 +137,7 @@ def filter_on_phonenumber(hosts, form):
             if host.phone_number == form.cleaned_data.get("phone_number"):
                 new_hosts.append(host)
     else:
+        print("in here")
         new_hosts = hosts
     return new_hosts
 
@@ -143,6 +162,7 @@ def filter_hosts(search_form, address_form, latlng, request):
     hosts = filter_on_time(hosts, search_form)
     hosts = filter_on_boattype(hosts, search_form)
     hosts = filter_on_event(hosts, search_form)
+    return hosts
 
 @login_required
 def findmyhost_view(request):
@@ -163,6 +183,7 @@ def findmyhost_view(request):
 
                 if (check_lat_lon(latlng)):
                     context['hosts'] = filter_hosts(search_form, address_form, latlng, request)
+                    print(context)
                 else:
                     messages.error(request, f'{request.user.username}\'s Please enter a valid address.')
             else:
