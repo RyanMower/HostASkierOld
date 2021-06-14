@@ -3,6 +3,7 @@
     <h1> Host a skier home page. </h1>
     {% for host in hosts %}
       <article class="media content-section">
+	<img class="rounded-circle article-img" src="{{ post.author.profile.image.path }}">
         <div class="media-body">
           <div class="article-metadata">
             <a class="mr-2" href="#">{{ host.name }}</a>

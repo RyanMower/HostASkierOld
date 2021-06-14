@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Post
 
 hostinfo = [
     {
@@ -19,7 +20,7 @@ hostinfo = [
 # Create your views here.
 def home_view(request):
     context = {
-        'hosts': hostinfo
+        'hosts': Post.objects.all()
     }
     return render(request, 'hostaskier/home.html', context)
 
