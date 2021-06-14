@@ -89,6 +89,24 @@ def is_within_radius(coords_1, coords_2, radius):
     x = c * 3956 # 6371 for kilometers
     return x <= radius
 
+def convert_int_to_dayofweek(day):
+    if day == '1':
+        return "Monday"
+    elif day == '2':
+        return "Tuesday"
+    elif day == '3':
+        return "Wednesday"
+    elif day == '4':
+        return "Thursday"
+    elif day == '5':
+        return "Friday"
+    elif day == '6':
+        return "Saturday"
+    elif day == '7':
+        return "Sunday"
+    else:
+        return ''
+
 ## ------------------------------- ##
 ## ------ FILTER FUNCTIONS  ------ ##
 ## ------------------------------- ##
@@ -97,10 +115,9 @@ def get_hosts():
 
 def filter_on_distance(hosts, form, search_form, latlng, request):
     new_hosts = []
-    print(search_form.cleaned_data.get("willing_distance"))
+    
     if search_form.cleaned_data.get("willing_distance") == '5':
-        print("in here")
-        return hosts
+            return hosts
 
     if not check_lat_lon(latlng):
         latlng['lat'] = request.user.latitude
@@ -126,7 +143,6 @@ def filter_on_email(hosts, form):
             if host.email == form.cleaned_data.get("email"):
                 new_hosts.append(host)
     else:
-        print("in here")
         new_hosts = hosts
     return new_hosts
 
@@ -137,21 +153,85 @@ def filter_on_phonenumber(hosts, form):
             if host.phone_number == form.cleaned_data.get("phone_number"):
                 new_hosts.append(host)
     else:
-        print("in here")
         new_hosts = hosts
     return new_hosts
 
+    # for i in range(len(hosts)):
+    #     if hosts[i].monday:
+    #         print(hosts[i].monday[7])
+
 def filter_on_price(hosts, form):
-    return hosts
+    new_hosts = []
+
+    if form.cleaned_data.get('max_price') != '':
+        for host in hosts:
+            if float(host.price) <= float(form.cleaned_data.get('max_price')):
+                new_hosts.append(host)
+    else:
+        new_hosts = hosts
+    return new_hosts
 
 def filter_on_time(hosts, form):
-    return hosts
+    if not form.cleaned_data.get("times"):
+        return hosts
+    
+    new_hosts = []
+    day = convert_int_to_dayofweek(form.cleaned_data.get("day"))
+    availability = []
+    times = form.cleaned_data.get("times")
+
+    for host in hosts:
+        added = False
+        if day == "Monday":
+            availability = host.monday
+        elif day == "Tuesday":
+            availability = host.tuesday
+        elif day == "Wednesday":
+            availability = host.wednesday
+        elif day == "Thursday":
+            availability = host.thursday
+        elif day == "Friday":
+            availability = host.friday
+        elif day == "Saturday":
+            availability = host.saturday
+        elif day == "Sunday":
+            availability = host.sunday
+        else:
+            print("Did not recognize day " + day)
+            return hosts
+
+        if availability: ## The host has times on the specific day
+            for i in range(len(availability)):
+                for j in range(len(times)):
+                    if availability[i] == times[j] and not added: ## Used to only add host once
+                        new_hosts.append(host)
+                        added = True
+
+    return new_hosts
 
 def filter_on_boattype(hosts, form):
-    return hosts
+    new_hosts = []
+    
+    if form.cleaned_data.get('boat_type') != []:
+        for host in hosts:
+            if set(host.boat_type).issubset(set(form.cleaned_data.get('boat_type'))):
+                new_hosts.append(host)
+    else:
+        new_hosts = hosts
+
+    return new_hosts
 
 def filter_on_event(hosts, form):
-    return hosts
+    new_hosts = []
+    
+    if form.cleaned_data.get('ski_events') != []:
+        for host in hosts:
+            if set(host.events_can_pull).issubset(set(form.cleaned_data.get('ski_events'))):
+                new_hosts.append(host)
+    else:
+        new_hosts = hosts
+        
+    return new_hosts
 
 def filter_hosts(search_form, address_form, latlng, request):
     hosts = get_hosts()
@@ -183,7 +263,6 @@ def findmyhost_view(request):
 
                 if (check_lat_lon(latlng)):
                     context['hosts'] = filter_hosts(search_form, address_form, latlng, request)
-                    print(context)
                 else:
                     messages.error(request, f'{request.user.username}\'s Please enter a valid address.')
             else:

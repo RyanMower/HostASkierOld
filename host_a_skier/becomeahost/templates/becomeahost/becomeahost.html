@@ -1,9 +1,73 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-    <h1> Become a host today! </h1>
-    <form method='POST'> 
+  <div class="content-section">
+    <form method='POST'>
+      <fieldset class="form-group">
+	<legend class="border-bottom mb-4">Become A Host</legend>
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type='submit' value='Save' /> 
+        {{ form.address_1|as_crispy_field }}
+        {{ form.address_2|as_crispy_field }}
+        <div class="form-row">
+	  <div class="form-group col-md-4 mb-0">
+	    {{ form.city|as_crispy_field }}
+          </div>
+          <div class="form-group col-md-4 mb-0">
+            {{ form.state|as_crispy_field }}
+          </div>
+          <div class="form-group col-md-4 mb-0">
+            {{ form.country|as_crispy_field }}
+          </div>
+	</div>
+	<div class="form-row">
+	  <div class="form-group col-md-6 mb-0">
+	    {{ form.zip_code|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md-6 mb-0">
+	    {{ form.email|as_crispy_field }}
+	  </div>
+	</div>
+	<div class="form-row">
+	  <div class="form-group col-md-6 mb-0">
+	    {{ form.phone_number|as_crispy_field }}	  
+	  </div>
+	  <div class="form-group col-md-6 mb-0">
+	    {{ form.price|as_crispy_field }}
+	  </div>
+	</div>
+	<div class="form-row">
+	  <div class="form-group col-md-6 mb-0">
+	    {{ form.boat_type|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md-6 mb-0">
+	    {{ form.events_can_pull|as_crispy_field }}
+	  </div>
+	</div>
+	<div class="form-row">
+	  <div class="form-group col-md mb-0">
+	      {{ form.monday|as_crispy_field }}
+	  </div> 
+	  <div class="form-group col-md mb-0">
+	      {{ form.tuesday|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md mb-0">
+	      {{ form.wednesday|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md mb-0">
+	      {{ form.thursday|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md mb-0">
+	      {{ form.friday|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md mb-0">
+	      {{ form.saturday|as_crispy_field }}
+	  </div>
+	  <div class="form-group col-md mb-0">
+	      {{ form.sunday|as_crispy_field }}
+	  </div>
+	</div>
+	<button class="btn btn-primary" type="submit">Submit</button>
+      </fieldset>
     </form>
+  </div>
 {% endblock content %}

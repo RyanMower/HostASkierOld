@@ -1,31 +1,72 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <h1> Find Your Host Today! </h1>
-    <div class="row align-items-start">
-    <div class="col">
-      <form method='POST' class="form-inline"> 
+    <div class="content-section">
+      <form method='POST'> 
         {% csrf_token %}
-	{{ search_form }}
-        If an address is not provided, your account address will be used instead.
-	{{ address_form }}
+        <fieldset class="form-group">
+	  <legend class="border-bottom mb-4">Filter Hosts</legend>
+	  <div class="form-row">
+	    <div class="form-group col-md-6 mb-0">
+		{{ search_form.max_price|as_crispy_field }}
+	    </div>
+	    <div class="form-group col-md-6 mb-0">
+		{{ search_form.willing_distance|as_crispy_field }}
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6 mb-0">
+	      {{ search_form.boat_type|as_crispy_field }}
+	    </div>
+	    <div class="form-group col-md-6 mb-0">
+	      {{ search_form.ski_events|as_crispy_field }}
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6 mb-0">
+	      {{ search_form.email|as_crispy_field }}
+	    </div>
+	    <div class="form-group col-md-6 mb-0">
+	      {{ search_form.phone_number|as_crispy_field }}
+	    </div>
+	  </div>
+	  {{ search_form.day|as_crispy_field }}
+	  {{ search_form.times|as_crispy_field }}
+          <small class="text-muted ml-2">
+	    *Address to be used in distance computation. If an address is not provided distance will be calculated using your profile's address.
+	  </small>
+          {{ address_form.address_1|as_crispy_field }}
+          {{ address_form.address_2|as_crispy_field }}
+          <div class="form-row">
+            <div class="form-group col-md-4 mb-0">
+              {{ address_form.city|as_crispy_field }}
+            </div>
+            <div class="form-group col-md-4 mb-0">
+              {{ address_form.state|as_crispy_field }}
+            </div>
+            <div class="form-group col-md-4 mb-0">
+              {{ address_form.country|as_crispy_field }}
+            </div>
+          </div>
+        </fieldset>
 	<button type="submit" class="btn btn-primary">Filter</button> 
       </form>
     </div>
-      <div class="col">
+    <div>
       {% for host in hosts %} 
         <article class="media content-section">
           <img class="rounded-circle article-img" src="{{host.hostest.profile.image.url }}">
           <div class="media-body">
             <div class="article-metadata">
               <a class="mr-2" href="#">{{ host.email }}</a>
-              <small class="text-muted">{{ host.price }}</small>
+	      <small class="text-muted">${{ host.price }} | {{host.boat_type}} | {{ host.events_can_pull }}</small>
             </div>
             <h2><a class="article-title" href="#">{{ host.hostest.username }}</a></h2>
-	    <p class="article-content">{{ host.address_1 }} {{ host.address_2 }} {{ host.city }}, {{ host.state}} {{ host.country }} {{ host.zip_code }}</p>
+	    <h6>{{ host.address_1 }} {{ host.address_2 }} {{ host.city }}, {{ host.state}} {{ host.country }} {{ host.zip_code }}</h6>
+	    <h6>{{ host.email }} | {{ host.phone_number }}</h6>
           </div>
         </article>
       {% endfor %}
-      </div>
-      </div>
+    </div>
+  </div>
 {% endblock content %}
