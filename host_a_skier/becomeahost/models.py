@@ -180,7 +180,7 @@ class Host(models.Model):
     
     extra_info = models.TextField(blank=True)
 
-    hostest = models.OneToOneField(Account, on_delete=models.CASCADE)
+    hostest = models.ForeignKey(Account, on_delete=models.CASCADE)
     
 
     def save(self, **kwargs):
